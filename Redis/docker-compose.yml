@@ -1,0 +1,6 @@
+hirise:
+  image: hirise
+  ports:
+    - 6379:6379
+  volumes:
+    - //c/Users/stefa/Redis/data:/data
