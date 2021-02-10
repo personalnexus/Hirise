@@ -1,1 +1,2 @@
 # Hirise
+Experiments with Redis
