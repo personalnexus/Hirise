@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5</TargetFramework>
@@ -6,6 +6,12 @@
 
   <ItemGroup>
     <PackageReference Include="StackExchange.Redis" Version="2.2.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="ShUtilities">
+      <HintPath>..\..\ShUtilities\bin\Release\net5.0\ShUtilities.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

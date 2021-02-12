@@ -1,2 +1,2 @@
 # Hirise
-Experiments with Redis
+Hirise is my experimental _**Hi**erarchical **R**ed**i**s **Se**ver_. Multiple users can connect to it and load and store items in a folder hierarchy. Each item maintains meta data about its last store.
