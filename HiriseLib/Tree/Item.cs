@@ -1,4 +1,6 @@
-﻿namespace HiriseLib.Tree
+﻿using System.Threading.Tasks;
+
+namespace HiriseLib.Tree
 {
     internal class Item: TreeElement, IItem
     {
@@ -10,6 +12,6 @@
         
         public string Data { get; set; }
 
-        public void Store(string data, IClientSession clientSession) => _connection.Store(this, data, clientSession);
+        public ValueTask StoreAsync(string data, IClientSession clientSession) => _connection.StoreAsync(this, data, clientSession);
     }
 }

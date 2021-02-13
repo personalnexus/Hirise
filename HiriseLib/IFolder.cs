@@ -1,10 +1,12 @@
-﻿namespace HiriseLib
+﻿using System.Threading.Tasks;
+
+namespace HiriseLib
 {
     public interface IFolder
     {
         string Name { get; }
         IFolder ParentFolder { get; }
         ElementStoreInfo LastStoreInfo { get; }
-        void Store(IClientSession client);
+        ValueTask StoreAsync(IClientSession clientSession);
     }
 }

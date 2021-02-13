@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Globalization;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using HiriseLib.Clients;
 using HiriseLib.Tree;
 using ShUtilities.Time;
@@ -79,63 +80,57 @@ namespace HiriseLib.Redis
 
         public ITree InitializeTree()
         {
-            var result = new Tree.Tree(this);
+            var loadTasks = new List<Task>();
 
+            var result = new Tree.Tree(this);
             foreach (IServer server in _connectionMultiplexer.GetEndPoints().Select(serverEndPoint => _connectionMultiplexer.GetServer(serverEndPoint)))
             {
                 foreach (RedisKey key in server.Keys(pattern: DatabaseSchema.TreePattern))
                 {
                     Protocol.SplitFolderAndItems(key, out string[] folders, out string itemName);
-                    if (string.IsNullOrEmpty(itemName))
-                    {
-                        Folder folder = result.GetOrAddFolder(folders);
-                        Load(folder);
-                    }
-                    else
-                    {
-                        Item item = result.GetOrAddItem(folders, itemName);
-                        Load(item);
-                    }
+                    ValueTask loadValueTask = string.IsNullOrEmpty(itemName) ? LoadAsync(result.GetOrAddFolder(folders)) : LoadAsync(result.GetOrAddItem(folders, itemName));
+                    loadTasks.Add(loadValueTask.AsTask());
                 }
             }
+            Task.WaitAll(loadTasks.ToArray());
 
             return result;
         }
 
         // Folders
 
-        private void Load(Folder folder)
+        private async ValueTask LoadAsync(Folder folder)
         {
-            LoadElement(folder);
+            await LoadElementAsync(folder);
         }
 
-        public void Store(Folder folder, IClientSession clientSession)
+        public async ValueTask StoreAsync(Folder folder, IClientSession clientSession)
         {
             PrepareTreeStoreElement(clientSession, 0, out HashEntry[] hashEntries, out ElementStoreInfo lastStoreInfo);
-            StoreTreeElement(folder, hashEntries, lastStoreInfo);
+            await StoreTreeElementAsync(folder, hashEntries, lastStoreInfo);
         }
 
         // Items
 
-        private void Load(Item item)
+        private async ValueTask LoadAsync(Item item)
         {
-            HashEntry[] hashEntries = LoadElement(item);
+            HashEntry[] hashEntries = await LoadElementAsync(item);
             item.Data = hashEntries.GetString("Data");
         }
 
-        public void Store(Item item, string data, IClientSession clientSession)
+        public async ValueTask StoreAsync(Item item, string data, IClientSession clientSession)
         {
             PrepareTreeStoreElement(clientSession, 1, out HashEntry[] hashEntries, out ElementStoreInfo lastStoreInfo);
             hashEntries[0] = new HashEntry("Data", data);
-            StoreTreeElement(item, hashEntries, lastStoreInfo);
+            await StoreTreeElementAsync(item, hashEntries, lastStoreInfo);
             item.Data = data;
         }
 
         // Utilities
 
-        private HashEntry[] LoadElement(TreeElement element)
+        private async ValueTask<HashEntry[]> LoadElementAsync(TreeElement element)
         {
-            HashEntry[] result = _database.HashGetAll(element.Path);
+            HashEntry[] result = await _database.HashGetAllAsync(element.Path);
             element.LastStoreInfo = GetLastStoreInfo(result);
             return result;
         }
@@ -157,9 +152,9 @@ namespace HiriseLib.Redis
             hashEntries.Set(^3, "LastStoreClientEndpoint", lastStoreInfo.ClientEndPoint);
         }
 
-        private void StoreTreeElement(TreeElement element, HashEntry[] hashEntries, ElementStoreInfo lastStoreInfo)
+        private async ValueTask StoreTreeElementAsync(TreeElement element, HashEntry[] hashEntries, ElementStoreInfo lastStoreInfo)
         {
-            _database.HashSet(Protocol.TreeNamespace + element.Path, hashEntries);
+            await _database.HashSetAsync(Protocol.TreeNamespace + element.Path, hashEntries);
             element.LastStoreInfo = lastStoreInfo;
         }
     }

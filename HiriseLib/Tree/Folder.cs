@@ -1,5 +1,6 @@
 ﻿using ShUtilities.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace HiriseLib.Tree
 {
@@ -20,6 +21,6 @@ namespace HiriseLib.Tree
 
         internal Item GetOrAddSubItem(string name) => _items.GetOrAdd(name, x => new Item(name, this, _connection));
 
-        public void Store(IClientSession clientSession) => _connection.Store(this, clientSession);
+        public ValueTask StoreAsync(IClientSession clientSession) => _connection.StoreAsync(this, clientSession);
     }
 }

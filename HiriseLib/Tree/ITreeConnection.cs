@@ -1,8 +1,10 @@
-﻿namespace HiriseLib.Tree
+﻿using System.Threading.Tasks;
+
+namespace HiriseLib.Tree
 {
     internal interface ITreeConnection
     {
-        void Store(Folder folder, IClientSession clientSession);
-        void Store(Item item, string data, IClientSession clientSession);
+        ValueTask StoreAsync(Folder folder, IClientSession clientSession);
+        ValueTask StoreAsync(Item item, string data, IClientSession clientSession);
     }
 }
