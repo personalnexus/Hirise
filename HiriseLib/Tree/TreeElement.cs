@@ -1,15 +1,15 @@
 ﻿namespace HiriseLib.Tree
 {
-    internal abstract class TreeElement
+    internal abstract class TreeElement: IPathElement
     {
-        protected TreeElement(string name, Folder parentFolder, ITreeConnection connection)
+        protected TreeElement(string name, Folder parentFolder, Tree tree)
         {
-            _connection = connection;
+            _tree = tree;
             Name = name;
             _parentFolder = parentFolder;
         }
 
-        protected readonly ITreeConnection _connection;
+        protected readonly Tree _tree;
         protected readonly Folder _parentFolder;
 
         public string Name { get; }

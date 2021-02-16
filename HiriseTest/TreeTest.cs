@@ -29,8 +29,8 @@ namespace HiriseTest
                     {
                         for (int level3 = 0; level3 < FolderCount; level3++)
                         {
-                            IItem item = connector.Tree.GetOrAdd(new[] { level1.ToString(), level2.ToString(), level3.ToString() }, "item");
-                            tasks[index++] = item.StoreAsync($@"
+                            IItem item = connector.Tree.GetOrAddItem(new[] { level1.ToString(), level2.ToString(), level3.ToString() }, "item");
+                            item.DataAsString = $@"
 Bid={level1}
 Ask={level2}
 Last={level3}
@@ -39,7 +39,8 @@ Maturity=soon
 Issuer=Hirise Reality LLC
 LongDescription=Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 ShortDescription=Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-", session).AsTask();
+";
+                            tasks[index++] = item.StoreAsync(session).AsTask();
                         }
                     }
                 }
@@ -62,8 +63,8 @@ ShortDescription=Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                     {
                         for (int level3 = 0; level3 < FolderCount; level3++)
                         {
-                            IItem item = connector.Tree.GetOrAdd(new[] { level1.ToString(), level2.ToString(), level3.ToString() }, "item");
-                            item.StoreAsync($@"
+                            IItem item = connector.Tree.GetOrAddItem(new[] { level1.ToString(), level2.ToString(), level3.ToString() }, "item");
+                            item.DataAsString = $@"
 Bid={level1}
 Ask={level2}
 Last={level3}
@@ -72,7 +73,8 @@ Maturity=soon
 Issuer=Hirise Reality LLC
 LongDescription=Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 ShortDescription=Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-", session).AsTask().Wait();
+";
+                            item.StoreAsync(session).AsTask().Wait();
                         }
                     }
                 }

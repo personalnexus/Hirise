@@ -6,21 +6,44 @@ namespace HiriseLib.Tree
 {
     internal class Folder: TreeElement, IFolder
     {
-        public Folder(string name, Folder parentFolder, ITreeConnection connection): base(name, parentFolder, connection)
+        public Folder(string name, Folder parentFolder, Tree tree): base(name, parentFolder, tree)
         {
             _items = new Dictionary<string, Item>();
             _subFolders = new Dictionary<string, Folder>();
         }
 
+        // Folders
+
         private readonly Dictionary<string, Folder> _subFolders;
-        private readonly Dictionary<string, Item> _items;
 
         public override string Path => _parentFolder == null ? Name : Protocol.CombineFolders(_parentFolder.Path, Name);
 
-        internal Folder GetOrAddSubFolder(string name) => _subFolders.GetOrAdd(name, x => new Folder(name, this, _connection));
+        internal Folder GetOrAddSubFolder(string name) => _subFolders.GetOrAdd(name, x => new Folder(name, this, _tree));
 
-        internal Item GetOrAddSubItem(string name) => _items.GetOrAdd(name, x => new Item(name, this, _connection));
+        public bool TryGetSubFolder(string folderName, out IFolder resultFolder)
+        {
+            bool result = TryGetSubFolder(folderName, out Folder folder);
+            resultFolder = folder;
+            return result;
+        }
 
-        public ValueTask StoreAsync(IClientSession clientSession) => _connection.StoreAsync(this, clientSession);
+        internal bool TryGetSubFolder(string name, out Folder folder) => _subFolders.TryGetValue(name, out folder);
+
+        // Items
+
+        private readonly Dictionary<string, Item> _items;
+
+        internal Item GetOrAddSubItem(string name) => _items.GetOrAdd(name, x => new Item(name, this, _tree));
+
+        public bool TryGetSubItem(string itemName, out IItem resultItem)
+        {
+            bool result = _items.TryGetValue(itemName, out Item item);
+            resultItem = item;
+            return result;
+        }
+
+        // Load/Store
+
+        public ValueTask StoreAsync(IClientSession clientSession) => _tree.Connection.StoreAsync(this, clientSession);
     }
 }

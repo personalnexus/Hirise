@@ -87,7 +87,7 @@ namespace HiriseLib.Redis
             {
                 foreach (RedisKey key in server.Keys(pattern: DatabaseSchema.TreePattern))
                 {
-                    Protocol.SplitFolderAndItems(key, out string[] folders, out string itemName);
+                    Protocol.SplitFolderAndItems(key.WithoutTreeNamespace(), out string[] folders, out string itemName);
                     ValueTask loadValueTask = string.IsNullOrEmpty(itemName) ? LoadAsync(result.GetOrAddFolder(folders)) : LoadAsync(result.GetOrAddItem(folders, itemName));
                     loadTasks.Add(loadValueTask.AsTask());
                 }
@@ -99,7 +99,7 @@ namespace HiriseLib.Redis
 
         // Folders
 
-        private async ValueTask LoadAsync(Folder folder)
+        public async ValueTask LoadAsync(Folder folder)
         {
             await LoadElementAsync(folder);
         }
@@ -112,25 +112,24 @@ namespace HiriseLib.Redis
 
         // Items
 
-        private async ValueTask LoadAsync(Item item)
+        public async ValueTask LoadAsync(Item item)
         {
             HashEntry[] hashEntries = await LoadElementAsync(item);
-            item.Data = hashEntries.GetString("Data");
+            item.DataAsString = hashEntries.GetString("Data");
         }
 
-        public async ValueTask StoreAsync(Item item, string data, IClientSession clientSession)
+        public async ValueTask StoreAsync(Item item, IClientSession clientSession)
         {
             PrepareTreeStoreElement(clientSession, 1, out HashEntry[] hashEntries, out ElementStoreInfo lastStoreInfo);
-            hashEntries[0] = new HashEntry("Data", data);
+            hashEntries.Set(0, "Data", item.DataAsString);
             await StoreTreeElementAsync(item, hashEntries, lastStoreInfo);
-            item.Data = data;
         }
 
         // Utilities
 
         private async ValueTask<HashEntry[]> LoadElementAsync(TreeElement element)
         {
-            HashEntry[] result = await _database.HashGetAllAsync(element.Path);
+            HashEntry[] result = await _database.HashGetAllAsync(element.PathInTreeNamespace());
             element.LastStoreInfo = GetLastStoreInfo(result);
             return result;
         }
@@ -154,7 +153,7 @@ namespace HiriseLib.Redis
 
         private async ValueTask StoreTreeElementAsync(TreeElement element, HashEntry[] hashEntries, ElementStoreInfo lastStoreInfo)
         {
-            await _database.HashSetAsync(Protocol.TreeNamespace + element.Path, hashEntries);
+            await _database.HashSetAsync(element.PathInTreeNamespace(), hashEntries);
             element.LastStoreInfo = lastStoreInfo;
         }
     }

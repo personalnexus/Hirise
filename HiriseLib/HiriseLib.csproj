@@ -13,5 +13,10 @@
       <HintPath>..\..\ShUtilities\bin\Release\net5.0\ShUtilities.dll</HintPath>
     </Reference>
   </ItemGroup>
-
+  
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>HiriseTest</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
 </Project>

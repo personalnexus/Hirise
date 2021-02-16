@@ -1,14 +1,17 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace HiriseLib
 {
-    public interface IItem
+    public interface IItem: IPathElement
     {
-        string Name { get; }
-        IFolder ParentFolder { get; }
         ElementStoreInfo LastStoreInfo { get; }
-        ValueTask StoreAsync(string data, IClientSession clientSession);
 
-        string Data { get; }
+        ValueTask LoadAsync();
+        ValueTask StoreAsync(IClientSession clientSession);
+
+        string DataAsString { get; set; }
+        IList<IFolder> DataAsFolderList { get; set; }
+        IList<IItem> DataAsItemList { get; set; }
     }
 }

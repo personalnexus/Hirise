@@ -2,11 +2,11 @@
 
 namespace HiriseLib
 {
-    public interface IFolder
+    public interface IFolder: IPathElement
     {
-        string Name { get; }
-        IFolder ParentFolder { get; }
         ElementStoreInfo LastStoreInfo { get; }
         ValueTask StoreAsync(IClientSession clientSession);
+        bool TryGetSubFolder(string folderName, out IFolder folder);
+        bool TryGetSubItem(string itemName, out IItem item);
     }
 }

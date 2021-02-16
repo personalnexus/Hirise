@@ -1,10 +1,18 @@
-﻿namespace HiriseLib
+﻿using ShUtilities.Collections;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace HiriseLib
 {
     public static class Protocol
     {
+        internal const char NewLine = '\n';
+        internal const string NewLineString = "\n";
+
         internal const char FolderSeparator = ':';
-        internal const char FolderItemSeparator = ':';
         internal const string FolderSeparatorString = ":";
+
+        internal const char FolderItemSeparator = '.';
 
         internal const string UserNamespace = "user" + FolderSeparatorString;
         internal const string TreeNamespace = "tree" + FolderSeparatorString;
@@ -16,10 +24,6 @@
         public static string[] SplitFolders(string path) => path.Split(FolderSeparator);
         public static void SplitFolderAndItems(string itemPath, out string[] folders, out string itemName)
         {
-            if (itemPath.StartsWith(TreeNamespace))
-            {
-                itemPath = itemPath[TreeNamespace.Length..];
-            }
             int folderItemSeparatorIndex = itemPath.LastIndexOf(FolderItemSeparator);
             if (folderItemSeparatorIndex == -1)
             {
@@ -28,9 +32,12 @@
             }
             else
             {
-                itemName = itemPath[folderItemSeparatorIndex..];
+                itemName = itemPath[(folderItemSeparatorIndex+1)..];
                 folders = SplitFolders(itemPath[..folderItemSeparatorIndex]);
             }
         }
+
+        public static string ElementsToStringList<T>(IEnumerable<T> elements) where T : IPathElement => elements.Select(x => x.Path).ToDelimitedString(NewLineString);
+
     }
 }
