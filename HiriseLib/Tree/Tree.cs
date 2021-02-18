@@ -49,11 +49,13 @@
             return result;
         }
 
-        public IItem GetOrAddItem(string itemPath)
+        public Item GetOrAddItem(string itemPath)
         {
             Protocol.SplitFolderAndItems(itemPath, out string[] folders, out string itemName);
             return GetOrAddItem(folders, itemName);
         }
+
+        IItem ITree.GetOrAddItem(string itemPath) => this.GetOrAddItem(itemPath);
 
         IItem ITree.GetOrAddItem(string[] folders, string itemName) => GetOrAddItem(folders, itemName);
 

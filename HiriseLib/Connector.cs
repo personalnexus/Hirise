@@ -1,4 +1,5 @@
-﻿using HiriseLib.Clients;
+﻿using HiriseLib.AccessControl;
+using HiriseLib.Clients;
 using HiriseLib.Redis;
 using ShUtilities.Common;
 using System;
@@ -14,7 +15,7 @@ namespace HiriseLib
         internal Connector(Connection connection)
         {
             _connection = connection;
-            _lazyTree = new Lazy<ITree>(_connection.InitializeTree);
+            _lazyTree = new Lazy<ITree>(_connection.InitializeTree, false);
         }
         public void Dispose()
         {
@@ -29,6 +30,5 @@ namespace HiriseLib
         public IClientSession Login(string clientName, string clientEndpoint) => new ClientSession(clientName, clientEndpoint, _connection);
 
         public IClient GetClient(string clientName) => _connection.GetClient(clientName);
-
     }
 }

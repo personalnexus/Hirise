@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace HiriseLib
 {
-    public interface IItem: IPathElement
+    public interface IItem: IPathElement, IAsyncSubscribable
     {
         ElementStoreInfo LastStoreInfo { get; }
 

@@ -13,5 +13,9 @@ namespace HiriseLib.Tree
 
         ValueTask LoadAsync(Item item);
         ValueTask StoreAsync(Item item, IClientSession clientSession);
+
+        // Access Control
+
+        IAccessControl AccessControl { get; }
     }
 }

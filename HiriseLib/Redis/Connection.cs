@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HiriseLib.AccessControl;
 using HiriseLib.Clients;
 using HiriseLib.Tree;
 using ShUtilities.Time;
@@ -26,8 +27,8 @@ namespace HiriseLib.Redis
             };
             _connectionMultiplexer = ConnectionMultiplexer.Connect(options);
             _database = _connectionMultiplexer.GetDatabase();
-
-        }
+            _accessControl = new UnrestrictedAccess();
+    }
 
         public void Dispose()
         {
@@ -35,6 +36,12 @@ namespace HiriseLib.Redis
             _connectionMultiplexer = null;
             _database = null;
         }
+
+        // Access Control
+
+        public IAccessControl AccessControl => _accessControl;
+
+        private readonly UnrestrictedAccess _accessControl;
 
         // Clients
 
@@ -63,7 +70,7 @@ namespace HiriseLib.Redis
 
         private void Load(Client client)
         {
-            HashEntry[] hashEntries = _database.HashGetAll(Protocol.UserNamespace + client.Name);
+            HashEntry[] hashEntries = _database.HashGetAll(DatabaseSchema.UserNamespace + client.Name);
             client.LastLoginEndpoint = hashEntries.GetString("LastLoginEndPoint");
             client.LastLoginTimestamp = hashEntries.GetTimestamp("LastLoginTimestamp");
         }
@@ -73,28 +80,36 @@ namespace HiriseLib.Redis
             var hashEntries = new HashEntry[2];
             hashEntries.Set(0, "LastLoginTimestamp", TimeProvider.Default.Now);
             hashEntries.Set(1, "LastLoginEndPoint", clientSession.Endpoint);
-            _database.HashSet(Protocol.UserNamespace + clientSession.Name, hashEntries);
+            _database.HashSet(DatabaseSchema.UserNamespace + clientSession.Name, hashEntries);
         }
 
         // Tree
 
+        private TreeUpdator _treeUpdator;
+
         public ITree InitializeTree()
         {
-            var loadTasks = new List<Task>();
+            if (_treeUpdator != null)
+            {
+                throw new InvalidOperationException("Tree already initialized");
+            }
 
-            var result = new Tree.Tree(this);
+            var tree = new Tree.Tree(this);
+            _treeUpdator = new TreeUpdator(tree, _connectionMultiplexer.GetSubscriber());
+
+            var loadTasks = new List<Task>();
             foreach (IServer server in _connectionMultiplexer.GetEndPoints().Select(serverEndPoint => _connectionMultiplexer.GetServer(serverEndPoint)))
             {
                 foreach (RedisKey key in server.Keys(pattern: DatabaseSchema.TreePattern))
                 {
                     Protocol.SplitFolderAndItems(key.WithoutTreeNamespace(), out string[] folders, out string itemName);
-                    ValueTask loadValueTask = string.IsNullOrEmpty(itemName) ? LoadAsync(result.GetOrAddFolder(folders)) : LoadAsync(result.GetOrAddItem(folders, itemName));
+                    ValueTask loadValueTask = string.IsNullOrEmpty(itemName) ? LoadAsync(tree.GetOrAddFolder(folders)) : LoadAsync(tree.GetOrAddItem(folders, itemName));
                     loadTasks.Add(loadValueTask.AsTask());
                 }
             }
             Task.WaitAll(loadTasks.ToArray());
 
-            return result;
+            return tree;
         }
 
         // Folders
@@ -122,6 +137,7 @@ namespace HiriseLib.Redis
         {
             PrepareTreeStoreElement(clientSession, 1, out HashEntry[] hashEntries, out ElementStoreInfo lastStoreInfo);
             hashEntries.Set(0, "Data", item.DataAsString);
+            _treeUpdator.PublishItemUpdate(item);
             await StoreTreeElementAsync(item, hashEntries, lastStoreInfo);
         }
 

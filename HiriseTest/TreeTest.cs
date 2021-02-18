@@ -15,10 +15,8 @@ namespace HiriseTest
         [TestMethod]
         public void StoreItemsAsync()
         {
-            using (var connector = new Connector())
+            using (Connector connector = InitializeConnector(out IClientSession session))
             {
-                IClientSession session = Initialize(connector);
-
                 var tasks = new Task[TotalFolderCount];
                 int index = 0;
 
@@ -52,9 +50,8 @@ ShortDescription=Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
         [TestMethod]
         public void StoreItems()
         {
-            using (var connector = new Connector())
+            using (Connector connector = InitializeConnector(out IClientSession session))
             {
-                IClientSession session = Initialize(connector);
 
                 Stopwatch stopWatch = Stopwatch.StartNew();
                 for (int level1 = 0; level1 < FolderCount; level1++)
@@ -82,13 +79,14 @@ ShortDescription=Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
             }
         }
 
-        private static IClientSession Initialize(Connector connector)
+        internal static Connector InitializeConnector(out IClientSession clientSession)
         {
+            var connector = new Connector();
             Stopwatch stopWatch = Stopwatch.StartNew();
             Assert.IsNotNull(connector.Tree);
             Console.WriteLine($"Initializing Tree took {stopWatch.ElapsedMilliseconds} ms");
-
-            return connector.Login("User3", "Machine3");
+            clientSession = connector.Login("User3", "Machine3");
+            return connector;
         }
     }
 }

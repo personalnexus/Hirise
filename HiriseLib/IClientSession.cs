@@ -2,9 +2,8 @@
 
 namespace HiriseLib
 {
-    public interface IClientSession: IDisposable
+    public interface IClientSession: IDisposable, ISubscriber
     {
-        string Name { get; }
         string Endpoint { get; }
         bool IsLoggedIn { get; }
     }

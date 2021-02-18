@@ -14,9 +14,6 @@ namespace HiriseLib
 
         internal const char FolderItemSeparator = '.';
 
-        internal const string UserNamespace = "U:" + FolderSeparatorString;
-        internal const string TreeNamespace = "T:" + FolderSeparatorString;
-
         public static string CombineFolders(string folder1, string folder2) => string.IsNullOrEmpty(folder1) ? folder2 : folder1 + FolderSeparatorString + folder2;
 
         public static string CombineFolderAndItem(string folder, string itemName) => folder + FolderItemSeparator + itemName;
