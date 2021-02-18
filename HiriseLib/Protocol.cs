@@ -9,13 +9,13 @@ namespace HiriseLib
         internal const char NewLine = '\n';
         internal const string NewLineString = "\n";
 
-        internal const char FolderSeparator = ':';
-        internal const string FolderSeparatorString = ":";
+        internal const char FolderSeparator = '\\';
+        internal const string FolderSeparatorString = "\\";
 
         internal const char FolderItemSeparator = '.';
 
-        internal const string UserNamespace = "user" + FolderSeparatorString;
-        internal const string TreeNamespace = "tree" + FolderSeparatorString;
+        internal const string UserNamespace = "U:" + FolderSeparatorString;
+        internal const string TreeNamespace = "T:" + FolderSeparatorString;
 
         public static string CombineFolders(string folder1, string folder2) => string.IsNullOrEmpty(folder1) ? folder2 : folder1 + FolderSeparatorString + folder2;
 
