@@ -10,7 +10,10 @@ namespace HiriseLib.Tree
         {
             _items = new Dictionary<string, Item>();
             _subFolders = new Dictionary<string, Folder>();
-            tree.FolderCount++;
+            if (tree != null)
+            {
+                tree.FolderCount++;
+            }
         }
 
         // Folders

@@ -14,7 +14,6 @@ namespace HiriseTest
             using (Connector connector2 = TreeTest.InitializeConnector(out IClientSession session2))
             {
                 IItem itemOnConnector1 = connector1.Tree.GetOrAddItem("TreeUpdatorTest.Item1");
-                Assert.IsNull(itemOnConnector1.DataAsString);
                 Assert.IsTrue(itemOnConnector1.AddSubscriberAsync(session1).Result);
 
                 IItem itemOnConnector2 = connector2.Tree.GetOrAddItem("TreeUpdatorTest.Item1");
