@@ -11,6 +11,6 @@ namespace HiriseLib.Redis
 
         internal static readonly RedisChannel TreeUpdateChannel = new RedisChannel(ChannelNamespace + Protocol.CombineFolders("System", "TreeUpdate"), RedisChannel.PatternMode.Literal);
 
-        internal static readonly RedisValue TreePattern = new RedisValue(TreeNamespace + "*");
+        internal static readonly RedisValue TreePattern = new RedisValue("T:*");
     }
 }
