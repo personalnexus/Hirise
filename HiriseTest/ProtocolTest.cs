@@ -1,6 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using HiriseLib.Tree;
 using HiriseLib;
+using System;
+using System.Linq;
 
 namespace HiriseTest
 {
@@ -43,6 +45,30 @@ namespace HiriseTest
             Protocol.SplitFolderAndItems("Node1\\Node2\\Node3.item1", out string[] folders, out string itemName);
             CollectionAssert.AreEqual(new[] { "Node1", "Node2", "Node3" }, folders);
             Assert.AreEqual("item1", itemName);
+        }
+
+        [TestMethod]
+        public void DateToStringToDate()
+        {
+            DateTime now = DateTime.Now;
+            string nowAsString = DateAsString(now);
+            DateTime actual = StringAsDate(nowAsString);
+            Assert.AreEqual(now.ToString("dd.MM.yyyy HH:mm:ss.fff"), actual.ToString("dd.MM.yyyy HH:mm:ss.fff"));
+        }
+
+        private string DateAsString(DateTime input)
+        {
+            double oa = input.ToOADate();
+            byte[] bytes = BitConverter.GetBytes(oa);
+            char[] chars = bytes.Select(b => (char)b).ToArray();
+            return new string(chars);
+        }
+
+        private DateTime StringAsDate(string input)
+        {
+            byte[] bytes = input.Select(c => (byte)c).ToArray();
+            double oa = BitConverter.ToDouble(bytes);
+            return DateTime.FromOADate(oa);
         }
     }
 }

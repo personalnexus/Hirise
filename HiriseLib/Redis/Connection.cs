@@ -172,5 +172,7 @@ namespace HiriseLib.Redis
             await _database.HashSetAsync(element.PathInTreeNamespace(), hashEntries);
             element.LastStoreInfo = lastStoreInfo;
         }
+
+        internal IDatabase GetInternalDatabase() => _database; // for demo only
     }
 }
