@@ -27,7 +27,7 @@ namespace HiriseTest
                     {
                         for (int level3 = 0; level3 < FolderCount; level3++)
                         {
-                            IItem item = connector.Tree.GetOrAddItem(new[] { level1.ToString(), level2.ToString(), level3.ToString() }, "item");
+                            IItem item = connector.Tree.GetOrAddItem($"{level1}\\{level2}\\{level3}.item2");
                             item.DataAsString = $@"
 Bid={level1}
 Ask={level2}
@@ -60,7 +60,7 @@ ShortDescription=Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                     {
                         for (int level3 = 0; level3 < FolderCount; level3++)
                         {
-                            IItem item = connector.Tree.GetOrAddItem(new[] { level1.ToString(), level2.ToString(), level3.ToString() }, "item");
+                            IItem item = connector.Tree.GetOrAddItem(new[] { level1.ToString(), level2.ToString(), level3.ToString() }, "item1");
                             item.DataAsString = $@"
 Bid={level1}
 Ask={level2}
@@ -84,7 +84,7 @@ ShortDescription=Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
             var connector = new Connector();
             Stopwatch stopWatch = Stopwatch.StartNew();
             Assert.IsNotNull(connector.Tree);
-            Console.WriteLine($"Initializing Tree took {stopWatch.ElapsedMilliseconds} ms");
+            Console.WriteLine($"Initializing Tree with {connector.Tree.FolderCount} folders and {connector.Tree.ItemCount} items took {stopWatch.ElapsedMilliseconds} ms");
             clientSession = connector.Login("User3", "Machine3");
             return connector;
         }

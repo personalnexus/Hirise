@@ -26,6 +26,8 @@
         public Item GetOrAddItem(string[] folders, string itemName) => GetOrAddFolder(folders).GetOrAddSubItem(itemName);
 
         // ITree: implementations return the external interfaces
+        public int FolderCount { get; internal set; }
+        public int ItemCount { get; internal set; }
 
         public IFolder GetOrAddFolder(string folderPath) => GetOrAddFolder(Protocol.SplitFolders(folderPath));
 

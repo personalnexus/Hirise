@@ -11,6 +11,7 @@ namespace HiriseLib.Tree
         {
             _subscribersWithAccess = new HashSet<ISubscriber>();
             _subscribersWithoutAccess = new HashSet<ISubscriber>();
+            tree.ItemCount++;
         }
 
         public override string Path => Protocol.CombineFolderAndItem(_parentFolder.Path, Name);
