@@ -1,5 +1,5 @@
 # Hirise
-Hirise is my experimental _**Hi**erarchical **R**ed**i**s **Se**rver_. For more background on this endeavor, checkl out [my blog](https://personalnexus.wordpress.com/2021/02/22/reading-up-on-redis).
+Hirise is my experimental _**Hi**erarchical **R**ed**i**s **Se**rver_. For more background on this endeavor, check out my blog post [_Reading up on Redis_](https://personalnexus.wordpress.com/2021/02/22/reading-up-on-redis).
 
 Multiple users can connect to it and load and store items in a folder hierarchy. Each item maintains meta data about its last store.
 
