@@ -1,11 +1,12 @@
 # Hirise
-Hirise is my experimental _**Hi**erarchical **R**ed**i**s **Se**rver_.
+Hirise is my experimental _**Hi**erarchical **R**ed**i**s **Se**rver_. For more background on this endeavor, checkl out [my blog](https://personalnexus.wordpress.com/2021/02/22/reading-up-on-redis).
 
 Multiple users can connect to it and load and store items in a folder hierarchy. Each item maintains meta data about its last store.
 
 ## Namespaces
+- C: Channels
 - T: Tree
-- U: User
+- U: Users
 
 ### Tree: Folders and Items
 
