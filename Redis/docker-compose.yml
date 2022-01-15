@@ -1,6 +1,8 @@
-hirise:
-  image: hirise
-  ports:
-    - 6379:6379
-  volumes:
-    - //c/Users/stefa/Redis/data:/data
+version: "3.8"
+services:
+  hirise:
+    image: hirise
+    ports:
+      - 6379:6379
+    volumes:
+      - //c/Users/stefa/Redis/data:/data
